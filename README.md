@@ -1,6 +1,6 @@
-# Foto-Kollage
+# Fotocollage
 
-Tool zur Erstellung einer Kollage aus beliebigen Bildern zu einer großen Leinwand.
+Tool zur Erstellung einer Collage aus beliebigen Bildern zu einer großen Leinwand.
 
 ---
 
