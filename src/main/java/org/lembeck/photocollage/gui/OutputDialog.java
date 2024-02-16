@@ -4,11 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-import static org.lembeck.photocollage.gui.GuiUtil.createButtonPanel;
-import static org.lembeck.photocollage.gui.GuiUtil.setApplicationIcon;
+import static org.lembeck.photocollage.gui.GuiUtil.*;
 
 public class OutputDialog extends JDialog {
 
+    public static final String IMAGE_WIDTH_KEY = "image-width";
+    public static final String IMAGE_HEIGHT_KEY = "image-height";
+    public static final String BORDER_SIZE_KEY = "border-size";
+    public static final String GAP_KEY = "gap";
+    public static final String BACKGROUND_COLOR_KEY = "background-color";
     private JTextField tfBreite;
 
     private JTextField tfHoehe;
@@ -69,6 +73,16 @@ public class OutputDialog extends JDialog {
 
         add(content, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
+        initValues();
+    }
+
+    private void initValues() {
+        tfBreite.setText(Integer.toString(loadInt(IMAGE_WIDTH_KEY, 1920)));
+        tfHoehe.setText(Integer.toString(loadInt(IMAGE_HEIGHT_KEY, 1080)));
+        tfBorderSize.setText(Integer.toString(loadInt(BORDER_SIZE_KEY, 10)));
+        tfGap.setText(Integer.toString(loadInt(GAP_KEY, 5)));
+        backgroundColorIcon.setColor(new Color(loadInt(BACKGROUND_COLOR_KEY, 0xffffff)));
+        btBackgroundColor.repaint();
     }
 
     private JButton createBackgroundColorButton() {

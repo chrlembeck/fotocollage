@@ -70,7 +70,7 @@ public class PreviewDialog extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             JFileChooser chooser = new JFileChooser();
-            File dir = getLastDirectory(RESULT_DIRECTORY_KEY);
+            File dir = loadFileReference(RESULT_DIRECTORY_KEY);
             if (dir != null) {
                 chooser.setCurrentDirectory(dir);
             }
@@ -112,7 +112,7 @@ public class PreviewDialog extends JFrame {
     void save(File file, boolean png) {
         try {
             ImageIO.write(zoomableImage.getModel().getImage(), png ? "png" : "jpg", file);
-            saveLastDirectory(RESULT_DIRECTORY_KEY, file.getParentFile());
+            saveFileReference(RESULT_DIRECTORY_KEY, file.getParentFile());
         } catch (IOException ioe) {
             JOptionPane.showMessageDialog(this, ioe.getLocalizedMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
             ioe.printStackTrace(System.err);

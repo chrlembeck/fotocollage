@@ -19,11 +19,21 @@ public final class GuiUtil {
         graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
     }
 
-    public static void saveLastDirectory(String key, File directory) {
+    public static void saveFileReference(String key, File directory) {
         Preferences.userNodeForPackage(CollageGUI.class).put(key, directory.toString());
     }
 
-    public static File getLastDirectory(String key) {
+    public static void saveInt(String key, int value) {
+        Preferences.userNodeForPackage(CollageGUI.class).putInt(key, value);
+        System.out.println("save " + value);
+    }
+
+    public static void saveString(String key, String value) {
+        Preferences.userNodeForPackage(CollageGUI.class).put(key, value);
+        System.out.println("save " + value);
+    }
+
+    public static File loadFileReference(String key) {
         String pref = Preferences.userNodeForPackage(CollageGUI.class).get(key, null);
         if (pref == null || pref.isBlank()) {
             return null;
@@ -31,6 +41,16 @@ public final class GuiUtil {
             File dir = new File(pref);
             return (dir.isDirectory() || dir.canRead()) ? dir : null;
         }
+    }
+
+    public static int loadInt(String key, int fallback) {
+        System.out.println("load " + Preferences.userNodeForPackage(CollageGUI.class).getInt(key, fallback));
+        return Preferences.userNodeForPackage(CollageGUI.class).getInt(key, fallback);
+    }
+
+    public static String loadString(String key, String fallback) {
+        System.out.println("load " + Preferences.userNodeForPackage(CollageGUI.class).get(key, fallback));
+        return Preferences.userNodeForPackage(CollageGUI.class).get(key, fallback);
     }
 
     public static JPanel createButtonPanel(JButton... buttons) {

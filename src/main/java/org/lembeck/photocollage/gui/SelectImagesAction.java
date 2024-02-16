@@ -5,8 +5,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
-import static org.lembeck.photocollage.gui.GuiUtil.getLastDirectory;
-import static org.lembeck.photocollage.gui.GuiUtil.saveLastDirectory;
+import static org.lembeck.photocollage.gui.GuiUtil.loadFileReference;
+import static org.lembeck.photocollage.gui.GuiUtil.saveFileReference;
 import static org.lembeck.photocollage.gui.Icons.ADD;
 
 public class SelectImagesAction extends AbstractAction {
@@ -35,7 +35,7 @@ public class SelectImagesAction extends AbstractAction {
         chooser.addChoosableFileFilter(new FileNameExtensionFilter("PNG (*.png)", "PNG"));
         chooser.addChoosableFileFilter(new FileNameExtensionFilter("JPEG (*.jpg; *.jpeg)", "JPG", "JPEG"));
         chooser.setDragEnabled(false);
-        File dir = getLastDirectory(IMAGE_DIRECTORY_KEY);
+        File dir = loadFileReference(IMAGE_DIRECTORY_KEY);
         if (dir != null) {
             chooser.setCurrentDirectory(dir);
         }
@@ -43,7 +43,7 @@ public class SelectImagesAction extends AbstractAction {
         int result = chooser.showOpenDialog(gui);
         if (result == JFileChooser.APPROVE_OPTION) {
             File[] files = chooser.getSelectedFiles();
-            saveLastDirectory(IMAGE_DIRECTORY_KEY, chooser.getCurrentDirectory());
+            saveFileReference(IMAGE_DIRECTORY_KEY, chooser.getCurrentDirectory());
             imagesPanel.addImages(files);
         }
     }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.lembeck.photocollage.gui.Icons.WIZARD;
+import static org.lembeck.photocollage.gui.OutputDialog.*;
 
 public class ComposeAction extends AbstractAction {
     private final OutputDialog outputDialog;
@@ -21,9 +22,19 @@ public class ComposeAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (inputValidation()) {
+            storeInputValues();
+
             Optional<BufferedImage> image = ComposeProgressDialog.compose(outputDialog, outputDialog.getGui().getImageList());
             image.ifPresent(i -> new PreviewDialog(outputDialog.getGui(), i).setVisible(true));
         }
+    }
+
+    private void storeInputValues() {
+        GuiUtil.saveInt(IMAGE_WIDTH_KEY, Integer.parseInt(outputDialog.getImageWidth()));
+        GuiUtil.saveInt(IMAGE_HEIGHT_KEY, Integer.parseInt(outputDialog.getImageHeight()));
+        GuiUtil.saveInt(BORDER_SIZE_KEY, Integer.parseInt(outputDialog.getBorderSize()));
+        GuiUtil.saveInt(GAP_KEY, Integer.parseInt(outputDialog.getGap()));
+        GuiUtil.saveInt(BACKGROUND_COLOR_KEY, outputDialog.getSelectedBackgroundColor().getRGB() & 0xffffff);
     }
 
     private boolean inputValidation() {
