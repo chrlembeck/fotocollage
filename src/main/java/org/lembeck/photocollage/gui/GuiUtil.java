@@ -3,7 +3,10 @@ package org.lembeck.photocollage.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.List;
 import java.util.prefs.Preferences;
+
+import static org.lembeck.photocollage.gui.Icons.*;
 
 public final class GuiUtil {
 
@@ -36,5 +39,9 @@ public final class GuiUtil {
             panel.add(button);
         }
         return panel;
+    }
+
+    public static void setApplicationIcon(Window window) {
+        window.setIconImages(List.of(ICON_16, ICON_24, ICON_32));
     }
 }
