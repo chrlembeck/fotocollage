@@ -25,12 +25,6 @@ public final class GuiUtil {
 
     public static void saveInt(String key, int value) {
         Preferences.userNodeForPackage(CollageGUI.class).putInt(key, value);
-        System.out.println("save " + value);
-    }
-
-    public static void saveString(String key, String value) {
-        Preferences.userNodeForPackage(CollageGUI.class).put(key, value);
-        System.out.println("save " + value);
     }
 
     public static File loadFileReference(String key) {
@@ -44,13 +38,7 @@ public final class GuiUtil {
     }
 
     public static int loadInt(String key, int fallback) {
-        System.out.println("load " + Preferences.userNodeForPackage(CollageGUI.class).getInt(key, fallback));
         return Preferences.userNodeForPackage(CollageGUI.class).getInt(key, fallback);
-    }
-
-    public static String loadString(String key, String fallback) {
-        System.out.println("load " + Preferences.userNodeForPackage(CollageGUI.class).get(key, fallback));
-        return Preferences.userNodeForPackage(CollageGUI.class).get(key, fallback);
     }
 
     public static JPanel createButtonPanel(JButton... buttons) {
