@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.*;
 
 import static org.lembeck.photocollage.PhotoComposer.CollageStyle.SIMPLE;
+import static org.lembeck.photocollage.gui.GuiUtil.prepareGraphics;
 
 public class PhotoComposer {
 
@@ -27,25 +28,26 @@ public class PhotoComposer {
     }
 
     public BufferedImage compose(CollageStyle style, CollageSettings settings) {
+        Map<ImageRef, Rectangle> imagePositions = new HashMap<>();
         if (style == SIMPLE) {
             AlignmentInfos alignmentInfos = calculateImageAlignment(images, settings, progressListener, 0, 1);
-            return AlignmentTree.paintImage(alignmentInfos.getTreeNode(), settings, progressListener);
+            imagePositions.putAll(alignmentInfos.calcImagePositions(0, 0));
         } else {
-            int w = settings.getWidth() - 2 * settings.getOuterBorderWidth();
-            int h = settings.getHeight() - 2 * settings.getOuterBorderWidth();
-            double f = 1 - 1 / Math.sqrt(5);
-            int b = (int) (w * f / 2);
-            int d = (int) (h * f / 2);
-            int a = w - b;
-            int c = h - d;
-            b -= settings.getInnerBorderWidth() / 2;
-            d -= settings.getInnerBorderWidth() / 2;
-            a -= settings.getInnerBorderWidth() - settings.getInnerBorderWidth() / 2;
-            c -= settings.getInnerBorderWidth() - settings.getInnerBorderWidth() / 2;
+            int totalImageWidth = settings.getWidth() - 2 * settings.getOuterBorderWidth();
+            int totalImageHeight = settings.getHeight() - 2 * settings.getOuterBorderWidth();
+            double goldenRatio = 1 - 1 / Math.sqrt(5);
+            int leftRightWidth = (int) (totalImageWidth * goldenRatio / 2);
+            int topBottomHeight = (int) (totalImageHeight * goldenRatio / 2);
+            int topBottomWidth = totalImageWidth - leftRightWidth;
+            int leftRightHeight = totalImageHeight - topBottomHeight;
+            leftRightWidth -= settings.getInnerBorderWidth() / 2;
+            topBottomHeight -= settings.getInnerBorderWidth() / 2;
+            topBottomWidth -= settings.getInnerBorderWidth() - settings.getInnerBorderWidth() / 2;
+            leftRightHeight -= settings.getInnerBorderWidth() - settings.getInnerBorderWidth() / 2;
 
-            CollageSettings topBottomSettings = new CollageSettings(a, d, settings.getInnerBorderWidth(), 0, settings.getBackgroundColor());
-            CollageSettings leftRightSettings = new CollageSettings(b, c, settings.getInnerBorderWidth(), 0, settings.getBackgroundColor());
-            CollageSettings centerSettings = new CollageSettings(a - b - settings.getInnerBorderWidth(), c - d - settings.getInnerBorderWidth(), settings.getInnerBorderWidth(), 0, settings.getBackgroundColor());
+            CollageSettings topBottomSettings = new CollageSettings(topBottomWidth, topBottomHeight, settings.getInnerBorderWidth(), 0, settings.getBackgroundColor());
+            CollageSettings leftRightSettings = new CollageSettings(leftRightWidth, leftRightHeight, settings.getInnerBorderWidth(), 0, settings.getBackgroundColor());
+            CollageSettings centerSettings = new CollageSettings(topBottomWidth - leftRightWidth - settings.getInnerBorderWidth(), leftRightHeight - topBottomHeight - settings.getInnerBorderWidth(), settings.getInnerBorderWidth(), 0, settings.getBackgroundColor());
 
             int imageCount = images.size() / 5;
 
@@ -55,24 +57,30 @@ public class PhotoComposer {
             AlignmentInfos rightTree = calculateImageAlignment(images.subList(3 * imageCount, 4 * imageCount), leftRightSettings, progressListener, 3, 5);
             AlignmentInfos centerTree = calculateImageAlignment(images.subList(4 * imageCount, images.size()), centerSettings, progressListener, 4, 5);
 
-            BufferedImage topImage = topTree.createImage(progressListener);
-            BufferedImage bottomImage = bottomTree.createImage(progressListener);
-            BufferedImage leftImage = leftTree.createImage(progressListener);
-            BufferedImage rightImage = rightTree.createImage(progressListener);
-            BufferedImage centerImage = centerTree.createImage(progressListener);
-
-            BufferedImage image = new BufferedImage(settings.getWidth(), settings.getHeight(), BufferedImage.TYPE_INT_RGB);
-            Graphics2D graphics = (Graphics2D) image.getGraphics();
-            graphics.setPaint(settings.getBackgroundColor());
-            graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
-            graphics.drawImage(leftImage, settings.getOuterBorderWidth(), settings.getOuterBorderWidth(), null);
-            graphics.drawImage(topImage, settings.getOuterBorderWidth() + b + settings.getInnerBorderWidth(), settings.getOuterBorderWidth(), null);
-            graphics.drawImage(bottomImage, settings.getOuterBorderWidth(), settings.getOuterBorderWidth() + c + settings.getInnerBorderWidth(), null);
-            graphics.drawImage(rightImage, settings.getWidth() - settings.getOuterBorderWidth() - b, settings.getOuterBorderWidth() + d + settings.getInnerBorderWidth(), null);
-            graphics.drawImage(centerImage, settings.getOuterBorderWidth() + b + settings.getInnerBorderWidth(), settings.getOuterBorderWidth() + d + settings.getInnerBorderWidth(), null);
-
-            return image;
+            imagePositions.putAll(topTree.calcImagePositions(settings.getOuterBorderWidth() + leftRightWidth + settings.getInnerBorderWidth(), settings.getOuterBorderWidth()));
+            imagePositions.putAll(bottomTree.calcImagePositions(settings.getOuterBorderWidth(), settings.getOuterBorderWidth() + leftRightHeight + settings.getInnerBorderWidth()));
+            imagePositions.putAll(leftTree.calcImagePositions(settings.getOuterBorderWidth(), settings.getOuterBorderWidth()));
+            imagePositions.putAll(rightTree.calcImagePositions(settings.getWidth() - settings.getOuterBorderWidth() - leftRightWidth, settings.getOuterBorderWidth() + topBottomHeight + settings.getInnerBorderWidth()));
+            imagePositions.putAll(centerTree.calcImagePositions(settings.getOuterBorderWidth() + leftRightWidth + settings.getInnerBorderWidth(), settings.getOuterBorderWidth() + topBottomHeight + settings.getInnerBorderWidth()));
         }
+
+        return createImage(settings, imagePositions);
+    }
+
+    public BufferedImage createImage(CollageSettings settings, Map<ImageRef, Rectangle> imagePositions) {
+        BufferedImage result = new BufferedImage(settings.getWidth(), settings.getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = (Graphics2D) result.getGraphics();
+        prepareGraphics(graphics);
+        graphics.setPaint(settings.getBackgroundColor());
+        graphics.fillRect(0, 0, result.getWidth(), result.getHeight());
+        imagePositions.forEach((imageRef, bounds) -> {
+            BufferedImage image = imageRef.getImage();
+            graphics.drawImage(image, bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height, 0, 0, image.getWidth(), image.getHeight(),
+                    null);
+            progressListener.registerProgress(new ImagePaintedEvent());
+        });
+
+        return result;
     }
 
     static AlignmentInfos calculateImageAlignment(List<ImageRef> images, CollageSettings settings,
@@ -96,7 +104,7 @@ public class PhotoComposer {
             TreeNode t = AlignmentTree.createTree(images, settings);
             t.adjust(1.05f);
 
-            Map<ImageRef, Rectangle> alignment = AlignmentTree.alignImages(t, settings);
+            Map<ImageRef, Rectangle> alignment = AlignmentTree.alignImages(0, 0, t, settings);
             LongSummaryStatistics statistics = alignment.values().stream().mapToLong(a -> ((long) a.width) * ((long) a.height)).summaryStatistics();
             // Verhältnis größtes Bild / kleinstes Bild
             long dimensionRatio = statistics.getMin() == 0 ? 0 : statistics.getMax() / statistics.getMin();

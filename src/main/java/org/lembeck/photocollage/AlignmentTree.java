@@ -1,16 +1,11 @@
 package org.lembeck.photocollage;
 
 import org.lembeck.photocollage.TreeNode.SplitType;
-import org.lembeck.photocollage.event.ImageComposeProgressListener;
-import org.lembeck.photocollage.event.ImagePaintedEvent;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.lembeck.photocollage.gui.GuiUtil.prepareGraphics;
 
 public class AlignmentTree {
 
@@ -72,29 +67,12 @@ public class AlignmentTree {
         return images.remove(bestIdx);
     }
 
-    public static Map<ImageRef, Rectangle> alignImages(TreeNode treeNode, CollageSettings settings) {
+    public static Map<ImageRef, Rectangle> alignImages(int dx, int dy, TreeNode treeNode, CollageSettings settings) {
         Map<ImageRef, Rectangle> map = new HashMap<>();
         treeNode.alignImages(settings, map,
-                new Rectangle(settings.getOuterBorderWidth(), settings.getOuterBorderWidth(),
+                new Rectangle(dx + settings.getOuterBorderWidth(), dy + settings.getOuterBorderWidth(),
                         settings.getWidth() - 2 * settings.getOuterBorderWidth(),
                         settings.getHeight() - 2 * settings.getOuterBorderWidth()));
         return map;
-    }
-
-    public static BufferedImage paintImage(TreeNode treeNode, CollageSettings settings,
-            ImageComposeProgressListener progressListener) {
-        Map<ImageRef, Rectangle> alignment = alignImages(treeNode, settings);
-        BufferedImage result = new BufferedImage(settings.getWidth(), settings.getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics = (Graphics2D) result.getGraphics();
-        prepareGraphics(graphics);
-        graphics.setPaint(settings.getBackgroundColor());
-        graphics.fillRect(0, 0, result.getWidth(), result.getHeight());
-        alignment.forEach((imageRef, bounds) -> {
-            BufferedImage image = imageRef.getImage();
-            graphics.drawImage(image, bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height, 0, 0, image.getWidth(), image.getHeight(),
-                    null);
-            progressListener.registerProgress(new ImagePaintedEvent());
-        });
-        return result;
     }
 }

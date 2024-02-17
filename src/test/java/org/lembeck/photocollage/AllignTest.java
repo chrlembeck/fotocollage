@@ -17,7 +17,7 @@ public class AllignTest {
         Leaf left = new Leaf(leftImage);
         Leaf right = new Leaf(rightImage);
         InnerNode node = new InnerNode(left, right, 2.5f, SplitType.VERTICAL);
-        Map<ImageRef, Rectangle> map = AlignmentTree.alignImages(node, new CollageSettings(100, 43, 5, 5, Color.WHITE));
+        Map<ImageRef, Rectangle> map = AlignmentTree.alignImages(0, 0, node, new CollageSettings(100, 43, 5, 5, Color.WHITE));
         assertEquals(5, map.get(leftImage).x);
         assertEquals(10 + map.get(leftImage).width, map.get(rightImage).x);
         assertEquals(5, map.get(leftImage).y);

@@ -1,7 +1,7 @@
 package org.lembeck.photocollage;
 
-import org.lembeck.photocollage.event.ImageComposeProgressListener;
-import java.awt.image.BufferedImage;
+import java.awt.*;
+import java.util.Map;
 
 public class AlignmentInfos {
 
@@ -14,11 +14,7 @@ public class AlignmentInfos {
         this.settings = settings;
     }
 
-    public TreeNode getTreeNode() {
-        return treeNode;
-    }
-
-    public BufferedImage createImage(ImageComposeProgressListener progressListener) {
-        return AlignmentTree.paintImage(treeNode, settings, progressListener);
+    public Map<ImageRef, Rectangle> calcImagePositions(int dx, int dy) {
+        return AlignmentTree.alignImages(dx, dy, treeNode, settings);
     }
 }
