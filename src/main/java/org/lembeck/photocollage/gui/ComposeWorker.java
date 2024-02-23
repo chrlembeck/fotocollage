@@ -8,8 +8,6 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import static org.lembeck.photocollage.PhotoComposer.CollageStyle.SIMPLE;
-
 public class ComposeWorker extends SwingWorker<BufferedImage, ImageComposeProgressEvent> implements ImageComposeProgressListener {
 
     private final ComposeProgressDialog dialog;
@@ -26,7 +24,7 @@ public class ComposeWorker extends SwingWorker<BufferedImage, ImageComposeProgre
     @Override
     protected BufferedImage doInBackground() {
         PhotoComposer composer = new PhotoComposer(images, this);
-        return composer.compose(SIMPLE, settings);
+        return composer.compose(PhotoComposer.CollageStyle.GROUPED, settings);
     }
 
     @Override

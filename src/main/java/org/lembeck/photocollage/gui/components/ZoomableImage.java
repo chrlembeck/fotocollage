@@ -71,13 +71,11 @@ public class ZoomableImage extends JComponent implements ZoomableImageChangeList
             viewRectOld = vp.getViewRect();
         }
         System.out.println("new zoom Factor " + newFactor);
-        setSize(getPreferredSize());
         revalidate();
         repaint();
         System.out.println(getParent());
         System.out.println(getParent().getParent());
         System.out.println(getParent().getParent().getParent());
-
         if (viewRectOld != null && getParent() != null && getParent() instanceof JViewport vp) {
             final Rectangle viewRectNew = vp.getViewRect();
             int oldCenterX;
@@ -105,9 +103,8 @@ public class ZoomableImage extends JComponent implements ZoomableImageChangeList
             }
             vp.setViewPosition(new Point(newX, newY));
 
-            System.out.println(newX + ": " + newY);
+            System.out.println(newX + ": " + newY + " : " + vp.getView().getSize());
             System.out.println(vp.getViewPosition());
-
         }
     }
 

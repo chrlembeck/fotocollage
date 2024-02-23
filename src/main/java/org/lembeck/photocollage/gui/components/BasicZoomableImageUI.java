@@ -51,8 +51,8 @@ public class BasicZoomableImageUI extends ZoomableImageUI implements MouseListen
         prepareGraphics(g);
 
         //g.drawImage(image, x, y, imageWidth, imageHeight, null);
-        AffineTransform transform = AffineTransform.getScaleInstance(zoomfactor, zoomfactor);
-        transform.translate(x, y);
+        AffineTransform transform = AffineTransform.getTranslateInstance(x, y);
+        transform.scale(zoomfactor, zoomfactor);
         g.drawRenderedImage(image, transform);
     }
 

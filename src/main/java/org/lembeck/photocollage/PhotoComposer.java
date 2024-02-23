@@ -64,19 +64,23 @@ public class PhotoComposer {
             imagePositions.putAll(centerTree.calcImagePositions(settings.getOuterBorderWidth() + leftRightWidth + settings.getInnerBorderWidth(), settings.getOuterBorderWidth() + topBottomHeight + settings.getInnerBorderWidth()));
         }
 
-        return createImage(settings, imagePositions);
+        return createImage(settings, imagePositions, progressListener);
     }
 
-    public BufferedImage createImage(CollageSettings settings, Map<ImageRef, Rectangle> imagePositions) {
+    public BufferedImage createImage(CollageSettings settings, Map<ImageRef, Rectangle> imagePositions,
+            ImageComposeProgressListener progressListener) {
         BufferedImage result = new BufferedImage(settings.getWidth(), settings.getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = (Graphics2D) result.getGraphics();
         prepareGraphics(graphics);
         graphics.setPaint(settings.getBackgroundColor());
         graphics.fillRect(0, 0, result.getWidth(), result.getHeight());
-        imagePositions.forEach((imageRef, bounds) -> {
-            BufferedImage image = imageRef.getImage();
-            graphics.drawImage(image, bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height, 0, 0, image.getWidth(), image.getHeight(),
-                    null);
+        imagePositions.entrySet().stream().parallel().forEach(e -> {
+            BufferedImage image = e.getKey().getImage();
+            Rectangle bounds = e.getValue();
+            synchronized (result) {
+                graphics.drawImage(image, bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height, 0, 0, image.getWidth(), image.getHeight(),
+                        null);
+            }
             progressListener.registerProgress(new ImagePaintedEvent());
         });
 
