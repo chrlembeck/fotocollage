@@ -3,6 +3,7 @@ package org.lembeck.photocollage.gui;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 import static org.lembeck.photocollage.gui.GuiUtil.loadFileReference;
@@ -21,6 +22,7 @@ public class SelectImagesAction extends AbstractAction {
         this.imagesPanel = imagesPanel;
         this.gui = gui;
         putValue(AbstractAction.NAME, "Bilder Hinzufügen");
+        putValue(MNEMONIC_KEY, KeyEvent.VK_H);
         putValue(AbstractAction.SMALL_ICON, ADD);
     }
 

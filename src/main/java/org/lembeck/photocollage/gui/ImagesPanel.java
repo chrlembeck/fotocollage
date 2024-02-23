@@ -5,6 +5,7 @@ import org.lembeck.photocollage.ImageRef;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class ImagesPanel extends JPanel {
         imagesTable = new JTable(imagesTableModel);
         imagesTable.setAutoCreateRowSorter(true);
         imagesTable.setSelectionMode(MULTIPLE_INTERVAL_SELECTION);
+        imagesTable.registerKeyboardAction(new RemoveAction(false), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), WHEN_FOCUSED);
         JScrollPane spImageTable = new JScrollPane(imagesTable);
         spImageTable.getViewport().getView().setBackground(imagesTable.getBackground());
         spImageTable.getViewport().setBackground(imagesTable.getBackground());
@@ -47,7 +49,7 @@ public class ImagesPanel extends JPanel {
         content.add(spImageTable, new GridBagConstraints(0, RELATIVE, REMAINDER, 1, 1, 1, CENTER, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 0, 0));
         content.add(lbInfo, new GridBagConstraints(0, RELATIVE, REMAINDER, 1, 1, 0, EAST, NONE, new Insets(2, 2, 2, 2), 0, 0));
 
-        JButton btRemove = new JButton(new RemoveAction());
+        JButton btRemove = new JButton(new RemoveAction(true));
         JButton btAddImages = new JButton(new SelectImagesAction(this, gui));
         JButton btOpenOutputDialog = new JButton(new OpenOutputDialogAction());
         JPanel buttons = createButtonPanel(btRemove, btAddImages, btOpenOutputDialog);
@@ -88,8 +90,12 @@ public class ImagesPanel extends JPanel {
 
     class RemoveAction extends AbstractAction {
 
-        RemoveAction() {
+        private final boolean showWarning;
+
+        RemoveAction(boolean showWarning) {
+            this.showWarning = showWarning;
             putValue(NAME, "Entfernen");
+            putValue(MNEMONIC_KEY, KeyEvent.VK_E);
             putValue(SMALL_ICON, Icons.REMOVE);
         }
 
@@ -97,7 +103,11 @@ public class ImagesPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             int[] selection = imagesTable.getSelectedRows();
             if (selection == null || selection.length == 0) {
-                JOptionPane.showMessageDialog(ImagesPanel.this, "Sie haben keine Bilder zum Entfernen ausgewählt.", "Keine Auswahl", JOptionPane.WARNING_MESSAGE);
+                if (showWarning) {
+                    JOptionPane.showMessageDialog(ImagesPanel.this, "Sie haben keine Bilder zum Entfernen ausgewählt.", "Keine Auswahl", JOptionPane.WARNING_MESSAGE);
+                }
+            } else {
+                imagesTableModel.removeAll(selection);
             }
         }
     }
@@ -106,6 +116,7 @@ public class ImagesPanel extends JPanel {
 
         public OpenOutputDialogAction() {
             putValue(NAME, "Collage erstellen");
+            putValue(MNEMONIC_KEY, KeyEvent.VK_C);
             putValue(SMALL_ICON, OPTIONS);
         }
 

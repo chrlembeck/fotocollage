@@ -4,10 +4,7 @@ import org.lembeck.photocollage.ImageRef;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class ImagesTableModel implements TableModel, ImageDataListener {
@@ -102,5 +99,17 @@ public class ImagesTableModel implements TableModel, ImageDataListener {
 
     public long getFileSize() {
         return images.stream().mapToLong(ImageRef::getFileSize).sum();
+    }
+
+    public void removeAll(int[] selection) {
+        Arrays.sort(selection);
+        for (int idx = selection.length - 1; idx >= 0; idx--) {
+            remove(selection[idx]);
+        }
+    }
+
+    private void remove(int idx) {
+        images.remove(idx);
+        listeners.forEach(l -> l.tableChanged(new TableModelEvent(this, idx, idx, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE)));
     }
 }

@@ -3,6 +3,7 @@ package org.lembeck.photocollage.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 import static org.lembeck.photocollage.gui.GuiUtil.*;
 
@@ -74,6 +75,9 @@ public class OutputDialog extends JDialog {
         add(content, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
         initValues();
+        getRootPane().setDefaultButton(btCompose);
+        KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        getRootPane().registerKeyboardAction(a -> dispose(), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
     private void initValues() {
