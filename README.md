@@ -3,6 +3,7 @@
 Tool zur Erstellung einer Collage aus beliebigen Bildern zu einer großen Leinwand.
 
 ![Beispieltransformation](docs/images/transform.png)
+*(Quelle der Fotos: [pixabay](https://pixabay.com))*
 
 ![Anwendung](docs/images/ausgabe.png)
 
