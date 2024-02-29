@@ -1,5 +1,7 @@
 package org.lembeck.photocollage;
 
+import com.mortennobel.imagescaling.ResampleFilters;
+import com.mortennobel.imagescaling.ResampleOp;
 import org.lembeck.photocollage.gui.ImageDataListener;
 import org.lembeck.photocollage.gui.ImageDataLoadedEvent;
 import javax.imageio.ImageIO;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.lembeck.photocollage.gui.ImageDataLoadedEvent.DataType.SIZE;
+import static org.lembeck.photocollage.gui.ImageDataLoadedEvent.DataType.THUMBNAIL;
 
 public class ImageRef {
 
@@ -26,6 +29,8 @@ public class ImageRef {
     private int width;
 
     private int height;
+
+    private BufferedImage preview;
 
     private final List<ImageDataListener> imageDataListeners = new ArrayList<>(1);
 
@@ -69,10 +74,28 @@ public class ImageRef {
             Dimension dim = getImageDimension(path);
             this.width = dim.width;
             this.height = dim.height;
-            imageDataListeners.forEach(l -> l.imageDataLoaded(new ImageDataLoadedEvent(this, SIZE)));
+            imageDataListeners.forEach(l -> l.imageMetadataLoaded(new ImageDataLoadedEvent(this, SIZE)));
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
+    }
+
+    public void loadPreview() {
+        BufferedImage image = getImage();
+        final int newWidth, newHeight;
+        final int imageSize = 80 - 2;
+        if (image.getWidth() > image.getHeight()) {
+            newWidth = imageSize;
+            newHeight = image.getHeight() * imageSize / image.getWidth();
+        } else {
+            newHeight = imageSize;
+            newWidth = image.getWidth() * imageSize / image.getHeight();
+        }
+
+        ResampleOp resizeOp = new ResampleOp(newWidth, newHeight);
+        resizeOp.setFilter(ResampleFilters.getLanczos3Filter());
+        this.preview = resizeOp.filter(image, null);
+        imageDataListeners.forEach(l -> l.imagePreviewLoaded(new ImageDataLoadedEvent(this, THUMBNAIL)));
     }
 
     public static Dimension getImageDimension(Path imgFile) throws IOException {
@@ -105,6 +128,10 @@ public class ImageRef {
 
     public long getFileSize() {
         return fileSize;
+    }
+
+    public BufferedImage getPreview() {
+        return preview;
     }
 
     public void addImageDataListener(ImageDataListener listener) {

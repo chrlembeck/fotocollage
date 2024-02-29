@@ -40,6 +40,8 @@ public class ImagesPanel extends JPanel {
         imagesTable.setAutoCreateRowSorter(true);
         imagesTable.setSelectionMode(MULTIPLE_INTERVAL_SELECTION);
         imagesTable.registerKeyboardAction(new RemoveAction(false), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), WHEN_FOCUSED);
+        imagesTable.setRowHeight(88);
+        imagesTable.setDefaultRenderer(Icon.class, new IconRenderer());
         JScrollPane spImageTable = new JScrollPane(imagesTable);
         spImageTable.getViewport().getView().setBackground(imagesTable.getBackground());
         spImageTable.getViewport().setBackground(imagesTable.getBackground());
@@ -82,6 +84,7 @@ public class ImagesPanel extends JPanel {
         }
         imagesTableModel.addAll(newImages);
         new Thread(new ImageMetadataLoader(newImages)).start();
+        new Thread(new ImagePreviewLoader(newImages)).start();
     }
 
     public List<ImageRef> getImageList() {

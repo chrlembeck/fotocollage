@@ -4,6 +4,9 @@ Tool zur Erstellung einer Collage aus beliebigen Bildern zu einer großen Leinwa
 
 ![Beispieltransformation](docs/images/transform.png)
 
+![Anwendung](docs/images/ausgabe.png)
+
+![Vorschau-Ansicht](docs/images/preview.png)
 
 ---
 

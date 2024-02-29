@@ -29,7 +29,7 @@ public class OutputDialog extends JDialog {
     private final CollageGUI gui;
 
     public OutputDialog(CollageGUI gui) {
-        super(gui, "Ausgabeoptionen", ModalityType.MODELESS);
+        super(gui, "Ausgabeoptionen", ModalityType.DOCUMENT_MODAL);
         this.gui = gui;
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setApplicationIcon(this);
