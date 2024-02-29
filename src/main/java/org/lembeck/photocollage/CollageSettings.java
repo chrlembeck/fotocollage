@@ -13,13 +13,16 @@ public class CollageSettings {
     private final int innerBorderWidth;
 
     private final Color backgroundColor;
+    private final PhotoComposer.CollageStyle style;
 
-    public CollageSettings(int width, int height, int innerBorderWidth, int outerBorderWidth, Color backgroundColor) {
+    public CollageSettings(int width, int height, int innerBorderWidth, int outerBorderWidth, Color backgroundColor,
+            PhotoComposer.CollageStyle style) {
         this.width = width;
         this.height = height;
         this.innerBorderWidth = innerBorderWidth;
         this.outerBorderWidth = outerBorderWidth;
         this.backgroundColor = backgroundColor;
+        this.style = style;
     }
 
     public int getWidth() {
@@ -44,5 +47,9 @@ public class CollageSettings {
 
     public float getAspectRatio() {
         return (float) (width - 2 * outerBorderWidth) / (float) (height - 2 * outerBorderWidth);
+    }
+
+    public PhotoComposer.CollageStyle getStyle() {
+        return style;
     }
 }

@@ -24,7 +24,7 @@ public class ComposeWorker extends SwingWorker<BufferedImage, ImageComposeProgre
     @Override
     protected BufferedImage doInBackground() {
         PhotoComposer composer = new PhotoComposer(images, this);
-        return composer.compose(PhotoComposer.CollageStyle.GROUPED, settings);
+        return composer.compose(settings.getStyle(), settings);
     }
 
     @Override

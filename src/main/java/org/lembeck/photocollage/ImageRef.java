@@ -57,7 +57,6 @@ public class ImageRef {
             return new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         } else {
             try {
-                System.out.println("Verarbeite Bild : " + path);
                 return ImageIO.read(path.toFile());
             } catch (IOException e) {
                 throw new RuntimeException(e);

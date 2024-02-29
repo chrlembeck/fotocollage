@@ -12,7 +12,7 @@ import static org.lembeck.photocollage.CollageUtil.ladeBilder;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        CollageSettings settings = new CollageSettings(8000, 4000, 15, 15, Color.WHITE);
+        CollageSettings settings = new CollageSettings(8000, 4000, 15, 15, Color.WHITE, PhotoComposer.CollageStyle.GROUPED);
         List<ImageRef> images = ladeBilder(Paths.get("D:", "temp", "leinwand"));
         images.forEach(ImageRef::initSize);
         PhotoComposer photoComposer = new PhotoComposer(images, event -> {

@@ -1,5 +1,7 @@
 package org.lembeck.photocollage;
 
+import com.mortennobel.imagescaling.ResampleFilters;
+import com.mortennobel.imagescaling.ResampleOp;
 import org.lembeck.photocollage.event.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -45,9 +47,9 @@ public class PhotoComposer {
             topBottomWidth -= settings.getInnerBorderWidth() - settings.getInnerBorderWidth() / 2;
             leftRightHeight -= settings.getInnerBorderWidth() - settings.getInnerBorderWidth() / 2;
 
-            CollageSettings topBottomSettings = new CollageSettings(topBottomWidth, topBottomHeight, settings.getInnerBorderWidth(), 0, settings.getBackgroundColor());
-            CollageSettings leftRightSettings = new CollageSettings(leftRightWidth, leftRightHeight, settings.getInnerBorderWidth(), 0, settings.getBackgroundColor());
-            CollageSettings centerSettings = new CollageSettings(topBottomWidth - leftRightWidth - settings.getInnerBorderWidth(), leftRightHeight - topBottomHeight - settings.getInnerBorderWidth(), settings.getInnerBorderWidth(), 0, settings.getBackgroundColor());
+            CollageSettings topBottomSettings = new CollageSettings(topBottomWidth, topBottomHeight, settings.getInnerBorderWidth(), 0, settings.getBackgroundColor(), SIMPLE);
+            CollageSettings leftRightSettings = new CollageSettings(leftRightWidth, leftRightHeight, settings.getInnerBorderWidth(), 0, settings.getBackgroundColor(), SIMPLE);
+            CollageSettings centerSettings = new CollageSettings(topBottomWidth - leftRightWidth - settings.getInnerBorderWidth(), leftRightHeight - topBottomHeight - settings.getInnerBorderWidth(), settings.getInnerBorderWidth(), 0, settings.getBackgroundColor(), SIMPLE);
 
             int imageCount = images.size() / 5;
 
@@ -78,8 +80,10 @@ public class PhotoComposer {
             BufferedImage image = e.getKey().getImage();
             Rectangle bounds = e.getValue();
             synchronized (result) {
-                graphics.drawImage(image, bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height, 0, 0, image.getWidth(), image.getHeight(),
-                        null);
+                ResampleOp resizeOp = new ResampleOp(bounds.width, bounds.height);
+                resizeOp.setFilter(ResampleFilters.getLanczos3Filter());
+                BufferedImage scaledImage = resizeOp.filter(image, null);
+                graphics.drawImage(scaledImage, bounds.x, bounds.y, null);
             }
             progressListener.registerProgress(new ImagePaintedEvent());
         });

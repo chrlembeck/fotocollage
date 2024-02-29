@@ -2,6 +2,7 @@ package org.lembeck.photocollage.gui;
 
 import org.lembeck.photocollage.CollageSettings;
 import org.lembeck.photocollage.ImageRef;
+import org.lembeck.photocollage.PhotoComposer;
 import org.lembeck.photocollage.event.ComposeFinishedEvent;
 import org.lembeck.photocollage.event.ComposeStartedEvent;
 import org.lembeck.photocollage.event.NewRatioFoundEvent;
@@ -57,7 +58,8 @@ public class ComposeProgressDialog extends JDialog {
                 parseInt(outputDialog.getImageHeight()),
                 parseInt(outputDialog.getGap()),
                 parseInt(outputDialog.getBorderSize()),
-                outputDialog.getSelectedBackgroundColor());
+                outputDialog.getSelectedBackgroundColor(),
+                PhotoComposer.CollageStyle.SIMPLE);
         this.worker = createWorker(settings, images);
         init(images.size());
         pack();
