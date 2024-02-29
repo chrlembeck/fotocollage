@@ -15,6 +15,7 @@ public class IconRenderer implements TableCellRenderer {
         label.setHorizontalTextPosition(CENTER);
         label.setVerticalAlignment(CENTER);
         label.setVerticalTextPosition(CENTER);
+        label.setOpaque(true);
     }
 
     @Override
@@ -22,6 +23,8 @@ public class IconRenderer implements TableCellRenderer {
             int row, int column) {
         Icon icon = (Icon) value;
         label.setIcon(icon);
+        label.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+
         return label;
     }
 

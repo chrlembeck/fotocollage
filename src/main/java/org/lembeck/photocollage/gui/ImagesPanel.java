@@ -84,7 +84,9 @@ public class ImagesPanel extends JPanel {
         }
         imagesTableModel.addAll(newImages);
         new Thread(new ImageMetadataLoader(newImages)).start();
-        new Thread(new ImagePreviewLoader(newImages)).start();
+        final Thread previewLoader = new Thread(new ImagePreviewLoader(newImages));
+        previewLoader.setPriority(Thread.MIN_PRIORITY + 1);
+        previewLoader.start();
     }
 
     public List<ImageRef> getImageList() {
